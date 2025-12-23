@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10-Digit Addition Practice</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e0e5ec 0%, #f5f7fa 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 20px 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            border: none;
+            max-height: 95vh;
+            overflow: hidden;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 5px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 18px;
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        /* Start Page */
+        .start-page {
+            text-align: center;
+            padding: 80px 120px;
+            background: linear-gradient(145deg, #f8fafc, #edf2f7);
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .start-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+
+        .start-desc {
+            font-size: 1.15rem;
+            color: #718096;
+            margin-bottom: 45px;
+            line-height: 1.7;
+        }
+
+        .start-btn {
+            padding: 20px 80px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(100, 116, 139, 0.35);
+            transition: all 0.25s ease;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(100, 116, 139, 0.45);
+        }
+
+        .start-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Game Page */
+        .game-page {
+            display: none;
+        }
+
+        .main-content {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            gap: 18px;
+            margin-bottom: 14px;
+        }
+
+        /* Left History */
+        .history-section {
+            display: flex;
+            flex-direction: column;
+            padding: 14px;
+            background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            min-width: 130px;
+            align-self: stretch;
+        }
+
+        .history-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .history-list {
+            width: 100%;
+            font-size: 0.85rem;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 10px;
+            margin-bottom: 5px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .history-item span:first-child {
+            text-align: left;
+        }
+
+        .history-item span:last-child {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+        }
+
+        .history-item.correct {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            color: #065f46;
+        }
+
+        .history-item.wrong {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+        }
+
+        /* Center Calculation Area */
+        .calc-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .calculation-box {
+            background: linear-gradient(180deg, #fafbfc 0%, #f4f6f8 100%);
+            border-radius: 12px;
+            padding: 14px 18px;
+            border: 1px solid #e2e8f0;
+            display: inline-block;
+        }
+
+        .number-row {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            height: 28px;
+        }
+
+        .digit-cell {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #374151;
+            font-family: 'Courier New', monospace;
+        }
+
+        .plus-cell {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #64748b;
+            font-family: 'Courier New', monospace;
+        }
+
+        .line {
+            border-bottom: 2px solid #64748b;
+            margin: 8px 0;
+            border-radius: 2px;
+        }
+
+        .answer-row {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            height: 30px;
+        }
+
+        .answer-cell {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #cbd5e1;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            border-radius: 5px;
+            transition: all 0.2s ease;
+        }
+
+        .answer-cell:focus-within {
+            border-color: #64748b;
+            box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.15);
+        }
+
+        .answer-cell input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            text-align: center;
+            font-size: 1.05rem;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+            background: transparent;
+            padding: 0;
+            color: #374151;
+        }
+
+        .answer-cell input:focus {
+            outline: none;
+        }
+
+        .answer-cell.correct {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border-color: #34d399;
+        }
+
+        .answer-cell.wrong {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border-color: #f87171;
+        }
+
+        /* Right Timer */
+        .timer-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 22px 28px;
+            background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            align-self: stretch;
+        }
+
+        .timer-display {
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: #374151;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 11px;
+            font-size: 0.95rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 8px;
+            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+            color: white;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 15px rgba(100, 116, 139, 0.25);
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(100, 116, 139, 0.35);
+        }
+
+        .result-message {
+            text-align: center;
+            font-size: 1rem;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 10px;
+            display: none;
+            font-weight: 600;
+        }
+
+        .result-message.show {
+            display: block;
+        }
+
+        .result-message.correct {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+        }
+
+        .result-message.wrong {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .correct-answer-display {
+            margin-top: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #991b1b;
+            letter-spacing: 1px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .stats {
+            text-align: center;
+            margin-top: 10px;
+            padding: 10px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 10px;
+            color: #64748b;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stats span {
+            font-weight: 700;
+            color: #374151;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>10-Digit Addition</h1>
+        <p class="subtitle">Add 10 ten-digit numbers together</p>
+
+        <!-- Start Page -->
+        <div class="start-page" id="start-page">
+            <div class="start-title">Ready?</div>
+            <div class="start-desc">Challenge yourself with<br>10-digit addition</div>
+            <button class="start-btn" onclick="startGame()">START</button>
+        </div>
+
+        <!-- Game Page -->
+        <div class="game-page" id="game-page">
+            <div class="main-content">
+                <!-- History -->
+                <div class="history-section">
+                    <div class="history-title">History</div>
+                    <div class="history-list" id="history-list"></div>
+                </div>
+
+                <!-- Calculation Area -->
+                <div class="calc-wrapper">
+                    <div class="calculation-box">
+                        <div id="numbers-display"></div>
+                        <div class="line"></div>
+                        <div class="answer-row" id="answer-row"></div>
+                    </div>
+                </div>
+
+                <!-- Timer -->
+                <div class="timer-section">
+                    <div class="timer-display" id="timer-display">00:00</div>
+                </div>
+            </div>
+
+            <button class="btn" id="submit-btn" onclick="checkAnswer()">Submit</button>
+            <button class="btn hidden" id="next-btn" onclick="nextQuestion()">Next</button>
+
+            <div class="result-message" id="result-message">
+                <div id="result-text"></div>
+                <div class="correct-answer-display hidden" id="correct-answer-display"></div>
+            </div>
+
+            <div class="stats" id="stats">
+                Correct: <span id="correct-count">0</span> | Wrong: <span id="wrong-count">0</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let numbers = [];
+        let correctAnswer = '';
+        let correctCount = 0;
+        let wrongCount = 0;
+        let questionNumber = 0;
+        const answerLength = 11;
+
+        // Timer variables
+        let timerInterval = null;
+        let elapsedSeconds = 0;
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(elapsedSeconds / 60);
+            const seconds = elapsedSeconds % 60;
+            document.getElementById('timer-display').textContent = 
+                String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+        }
+
+        function startTimer() {
+            elapsedSeconds = 0;
+            updateTimerDisplay();
+            timerInterval = setInterval(() => {
+                elapsedSeconds++;
+                updateTimerDisplay();
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+        }
+
+        function generateTenDigitNumber() {
+            let num = '';
+            num += Math.floor(Math.random() * 9) + 1;
+            for (let i = 1; i < 10; i++) {
+                num += Math.floor(Math.random() * 10);
+            }
+            return num;
+        }
+
+        function addLargeNumbers(numbers) {
+            let result = '0';
+            for (let num of numbers) {
+                result = addTwo(result, num);
+            }
+            return result;
+        }
+
+        function addTwo(a, b) {
+            let result = '';
+            let carry = 0;
+            const maxLen = Math.max(a.length, b.length);
+            a = a.padStart(maxLen, '0');
+            b = b.padStart(maxLen, '0');
+            
+            for (let i = maxLen - 1; i >= 0; i--) {
+                let sum = parseInt(a[i]) + parseInt(b[i]) + carry;
+                carry = Math.floor(sum / 10);
+                result = (sum % 10) + result;
+            }
+            
+            if (carry > 0) {
+                result = carry + result;
+            }
+            return result;
+        }
+
+        function createDigitCells(num, withPlus = false) {
+            const row = document.createElement('div');
+            row.className = 'number-row';
+            
+            const paddedNum = num.padStart(10, ' ');
+            
+            const plusCell = document.createElement('div');
+            plusCell.className = 'plus-cell';
+            plusCell.textContent = withPlus ? '+' : '';
+            row.appendChild(plusCell);
+            
+            for (let digit of paddedNum) {
+                const cell = document.createElement('div');
+                cell.className = 'digit-cell';
+                cell.textContent = digit === ' ' ? '' : digit;
+                row.appendChild(cell);
+            }
+            
+            return row;
+        }
+
+        function createAnswerCells() {
+            const row = document.getElementById('answer-row');
+            row.innerHTML = '';
+            
+            const plusCell = document.createElement('div');
+            plusCell.className = 'plus-cell';
+            plusCell.textContent = '';
+            row.appendChild(plusCell);
+            
+            for (let i = 0; i < answerLength; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'answer-cell';
+                
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.maxLength = 1;
+                input.dataset.index = i;
+                
+                input.addEventListener('input', function(e) {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                    if (this.value && i > 0) {
+                        const prevInput = row.querySelector(`input[data-index="${i - 1}"]`);
+                        if (prevInput) prevInput.focus();
+                    }
+                });
+                
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Backspace' && !this.value && i < answerLength - 1) {
+                        const nextInput = row.querySelector(`input[data-index="${i + 1}"]`);
+                        if (nextInput) {
+                            nextInput.focus();
+                            nextInput.value = '';
+                        }
+                    }
+                    if (e.key === 'Enter') {
+                        checkAnswer();
+                    }
+                    if (e.key === 'ArrowLeft' && i > 0) {
+                        const prevInput = row.querySelector(`input[data-index="${i - 1}"]`);
+                        if (prevInput) prevInput.focus();
+                    }
+                    if (e.key === 'ArrowRight' && i < answerLength - 1) {
+                        const nextInput = row.querySelector(`input[data-index="${i + 1}"]`);
+                        if (nextInput) nextInput.focus();
+                    }
+                });
+                
+                cell.appendChild(input);
+                row.appendChild(cell);
+            }
+        }
+
+        function generateQuestion() {
+            numbers = [];
+            for (let i = 0; i < 10; i++) {
+                numbers.push(generateTenDigitNumber());
+            }
+            
+            correctAnswer = addLargeNumbers(numbers);
+            
+            const display = document.getElementById('numbers-display');
+            display.innerHTML = '';
+            
+            numbers.forEach((num, index) => {
+                const row = createDigitCells(num, index === 9);
+                display.appendChild(row);
+            });
+            
+            createAnswerCells();
+            
+            const lastInput = document.querySelector(`.answer-cell input[data-index="${answerLength - 1}"]`);
+            if (lastInput) lastInput.focus();
+            
+            document.getElementById('result-message').className = 'result-message';
+            document.getElementById('correct-answer-display').className = 'correct-answer-display hidden';
+            document.getElementById('submit-btn').className = 'btn';
+            document.getElementById('next-btn').className = 'btn hidden';
+            
+            document.querySelectorAll('.answer-cell input').forEach(input => {
+                input.disabled = false;
+            });
+            document.querySelectorAll('.answer-cell').forEach(cell => {
+                cell.classList.remove('correct', 'wrong');
+            });
+
+            // Start timer
+            startTimer();
+        }
+
+        function startGame() {
+            document.getElementById('start-page').style.display = 'none';
+            document.getElementById('game-page').style.display = 'block';
+            questionNumber = 0;
+            correctCount = 0;
+            wrongCount = 0;
+            document.getElementById('correct-count').textContent = '0';
+            document.getElementById('wrong-count').textContent = '0';
+            document.getElementById('history-list').innerHTML = '';
+            generateQuestion();
+        }
+
+        function checkAnswer() {
+            // Stop timer
+            stopTimer();
+            const timeTaken = elapsedSeconds;
+
+            const inputs = document.querySelectorAll('.answer-cell input');
+            let userAnswer = '';
+            inputs.forEach(input => {
+                userAnswer += input.value || '0';
+            });
+            
+            userAnswer = userAnswer.replace(/^0+/, '') || '0';
+            const cleanCorrectAnswer = correctAnswer.replace(/^0+/, '') || '0';
+            
+            const resultMsg = document.getElementById('result-message');
+            const resultText = document.getElementById('result-text');
+            const correctDisplay = document.getElementById('correct-answer-display');
+            
+            inputs.forEach(input => {
+                input.disabled = true;
+            });
+
+            questionNumber++;
+            let isCorrect = false;
+            
+            if (userAnswer === cleanCorrectAnswer) {
+                isCorrect = true;
+                correctCount++;
+                document.querySelectorAll('.answer-cell').forEach(cell => {
+                    cell.classList.add('correct');
+                });
+                resultText.textContent = 'Correct! 😊';
+                resultMsg.className = 'result-message show correct';
+            } else {
+                wrongCount++;
+                document.querySelectorAll('.answer-cell').forEach(cell => {
+                    cell.classList.add('wrong');
+                });
+                resultText.textContent = 'Wrong! 😢';
+                correctDisplay.textContent = 'Answer: ' + correctAnswer;
+                correctDisplay.className = 'correct-answer-display';
+                resultMsg.className = 'result-message show wrong';
+            }
+
+            // Add to history
+            const historyList = document.getElementById('history-list');
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item ' + (isCorrect ? 'correct' : 'wrong');
+            historyItem.innerHTML = `<span>Q${questionNumber}</span><span>${formatTime(timeTaken)}</span>`;
+            historyList.appendChild(historyItem);
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('wrong-count').textContent = wrongCount;
+            
+            document.getElementById('submit-btn').className = 'btn hidden';
+            document.getElementById('next-btn').className = 'btn';
+        }
+
+        function nextQuestion() {
+            generateQuestion();
+        }
+    </script>
+</body>
+</html>
